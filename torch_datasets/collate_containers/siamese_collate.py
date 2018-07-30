@@ -3,7 +3,7 @@ import numpy as np
 import torch
 import torchvision
 
-from ._detection_collate_configs import make_configs
+from ._siamese_collate_configs import make_configs
 from ..utils import transforms
 
 
@@ -43,11 +43,16 @@ class SiameseCollateContainer(object):
 
     def _resize_image(self, image):
         image = transforms.resize_image_2(
-            img,
+            image,
             width=self.configs['image_width'],
             height=self.configs['image_height'],
             stretch_to_fill=self.configs['stretch_to_fill']
         )
+        return image
+
+    def _convert_tensor(self, image):
+        image = self.to_tensor(image)
+        image = self.normalize(image)
         return image
 
     def collate_fn(self, sample_group):
@@ -75,8 +80,9 @@ class SiameseCollateContainer(object):
             image_group[index] = image
 
         # Compile samples into batch
-        image_batch = torch.stack(image_group, dim=0)
-        label_batch = torch.stack(label_group, dim=0)
+        image_batch = [self._convert_tensor(image) for image in image_group]
+        image_batch = torch.stack(image_batch, dim=0)
+        label_batch = label_group
 
         return {
             'image' : image_batch,
