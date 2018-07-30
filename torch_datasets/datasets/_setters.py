@@ -1,8 +1,6 @@
 """ File to store all Dataset setter functions """
 from __future__ import division
 
-import os
-
 
 def set_classes(self, classes):
     """ Sets the classes for this given dataset
