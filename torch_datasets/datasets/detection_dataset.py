@@ -111,7 +111,8 @@ class DetectionDataset(torch.utils.data.Dataset):
     ###########################################################################
     #### Dataset misc functions
 
-    _prepare_bbox = _misc._prepare_bbox
+    _prepare_bbox      = _misc._prepare_bbox
+    _populate_image_hw = _misc._populate_image_hw
 
     ###########################################################################
     #### Dataset getter and loaders

@@ -1,3 +1,4 @@
+import os
 import warnings
 from ..utils.image_io import get_image_size, read_image_url
 
@@ -23,7 +24,7 @@ def _prepare_bbox(self, bbox, image_id):
     if (bbox[0] < 0) or (bbox[1] < 0):
         warnings.warn('Invalid bbox {}'.format(bbox))
     if (bbox[2] > image_width) or (bbox[3] > image_height):
-        warnings.warn('Invalid bbox {}, image height is {}, image width is {}}'.format(
+        warnings.warn('Invalid bbox {}, image height is {}, image width is {}'.format(
             bbox, image_width, image_height))
 
     return bbox

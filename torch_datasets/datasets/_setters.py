@@ -74,7 +74,7 @@ def set_image(
         'image_url'    : image_url,
         'width'        : width,
         'height'       : height,
-        'aspect_ratio' : width / height
+        'aspect_ratio' : width / height if (width is not None and height is not None) else None
     }
 
     # Store all required info
