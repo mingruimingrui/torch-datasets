@@ -86,13 +86,16 @@ class DetectionDataset(torch.utils.data.Dataset):
             dataset_file    : Path to DetectionDataset json file (or None if saving to same file dataset is loaded from)
             force_overwrite : Flag to raise if overwriting over existing dataset file
         """
+        if dataset_file is not None:
+            self.dataset_file = dataset_file
+
         # Initialize dict
         json_dataset = OrderedDict()
 
         # Save dataset info
         json_dataset['root_dir'] = self.root_dir
         json_dataset['dataset_type'] = self.dataset_type
-        json_dataset['classes'] = list(name_to_class_info.keys())
+        json_dataset['classes'] = list(self.name_to_class_info.keys())
         json_dataset['images'] = list(self.image_infos.values())
         json_dataset['annotations'] = list(self.ann_infos.values())
 
