@@ -17,7 +17,7 @@ class DetectionCollateContainer(object):
             std=[0.229, 0.224, 0.225]
         )
         self.transform_generator = None
-        if self.config['allow_transform']:
+        if self.configs['allow_transform']:
             self.transform_generator = self._make_transform_generator()
 
     def _make_transform_generator(self):
@@ -34,7 +34,7 @@ class DetectionCollateContainer(object):
             flip_y_chance   = self.configs['flip_y_chance'],
         )
 
-    def random_transform_entry(self, image, annotations):
+    def _random_transform_entry(self, image, annotations):
         transformation = adjust_transform_for_image(next(self.transform_generator), image)
 
         # Transform image and annotations
@@ -45,7 +45,7 @@ class DetectionCollateContainer(object):
 
         return image, annotations
 
-    def resize_image(self, image, annotations):
+    def _resize_image(self, image, annotations):
         image, scale = transforms.resize_image_1(
             image,
             min_side=self.configs['image_min_side'],
@@ -54,7 +54,7 @@ class DetectionCollateContainer(object):
         annotations[:, :4] = annotations[:, :4] * scale
         return image, annotations
 
-    def filter_annotations(self, image, annotations):
+    def _filter_annotations(self, image, annotations):
         assert isinstance(annotations, np.ndarray)
 
         # test x2 < x1 | y2 < y1 | x1 < 0 | y1 < 0 | x2 <= 0 | y2 <= 0 | x2 >= image.shape[1] | y2 >= image.shape[0]
@@ -69,6 +69,17 @@ class DetectionCollateContainer(object):
 
         if len(invalid_indices):
             annotations = np.delete(annotations, invalid_indices, axis=0)
+
+        return image, annotations
+
+    def _convert_tensor(self, image, annotations, max_image_hw):
+        # Perform normalization on image and convert to tensor
+        image = transforms.pad_img_to(image, max_image_hw)
+        image = self.to_tensor(image)
+        image = self.normalize(image)
+
+        # Convert annotations to tensors
+        annotations = torch.Tensor(annotations)
 
         return image, annotations
 
@@ -95,10 +106,12 @@ class DetectionCollateContainer(object):
         for index, (image, annotations) in enumerate(zip(image_group, annotations_group)):
             # Augment sample
             if self.configs['allow_transform']:
-                image, annotations = self.random_transform_entry(image, annotations)
+                image, annotations = self._random_transform_entry(image, annotations)
 
-            image, annotations = self.resize_image(image, annotations)
-            image, annotations = self.filter_annotations(image, annotations)
+            if self.configs['allow_image_resize']:
+                image, annotations = self._resize_image(image, annotations)
+
+            image, annotations = self._filter_annotations(image, annotations)
 
             image_group[index] = image
             annotations_group[index] = annotations
@@ -109,13 +122,7 @@ class DetectionCollateContainer(object):
         annotations_batch = []
 
         for image, annotations in zip(image_group, annotations_group):
-            # Perform normalization on image and convert to tensor
-            image = transforms.pad_img_to(image, max_image_hw)
-            image = self.to_tensor(image)
-            image = self.normalize(image)
-
-            # Convert annotations to tensors
-            annotations = torch.Tensor(annotations)
+            image, annotations = self._convert_tensor(image, annotations, max_image_hw)
 
             image_batch.append(image)
             annotations_batch.append(annotations)

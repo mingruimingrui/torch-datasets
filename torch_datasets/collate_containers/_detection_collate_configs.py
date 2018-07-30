@@ -31,10 +31,6 @@ _c.flip_y_chance   = 0.0
 # Set default configs to be immutable
 _c.immutable(True)
 
-def validate_configs(configs):
-    assert isinstance(configs.num_classes, int), 'num_classes must be specified'
-    configs.num_anchors = len(configs.anchor_ratios) * len(configs.anchor_scales)
-
 def make_configs(**kwargs):
     configs = deepcopy(_c)
     configs.immutable(False)
@@ -42,9 +38,6 @@ def make_configs(**kwargs):
     # Update default configs with user provided ones
     for arg, value in kwargs.items():
         configs[arg] = value
-
-    # Validate
-    validate_configs(configs)
 
     configs.immutable(True)
 
