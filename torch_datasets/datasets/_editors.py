@@ -9,6 +9,12 @@ def delete_image(self, image_id):
     del self.image_infos[image_id]
     self.all_image_index = self.list_all_image_index()
 
+def delete_ann(self, ann_id):
+    """ Deletes the annotation associated with the ann_id """
+    image_id = self.ann_infos[ann_id]['image_id']
+    self.img_to_ann[image_id].remove(ann_id)
+    del self.ann_infos[ann_id]
+
 def edit_image_path(self, image_id, new_image_path):
     """ Edits the image path of an entry """
     self.image_infos[image_id]['image_path'] = new_image_path
