@@ -2,9 +2,9 @@ import os
 import json
 from collections import OrderedDict
 
-import torch
+import torch.utils.data
 
-from . import _getters, _setters, _editors
+from . import _getters, _setters, _editors, _misc
 
 
 class DetectionDataset(torch.utils.data.Dataset):
@@ -108,13 +108,13 @@ class DetectionDataset(torch.utils.data.Dataset):
     ###########################################################################
     #### Dataset misc functions
 
-    self._prepare_bbox = _prepare_bbox
+    _prepare_bbox = _misc._prepare_bbox
 
     ###########################################################################
     #### Dataset getter and loaders
 
     get_dataset_file = _getters.get_dataset_file
-    get_size         = _getters.size
+    get_size         = _getters.get_size
     get_root_dir     = _getters.get_root_dir
     get_num_classes  = _getters.get_num_classes
 
@@ -139,9 +139,9 @@ class DetectionDataset(torch.utils.data.Dataset):
     ###########################################################################
     #### Dataset setters
 
-    set_classes          = _setters.set_classes
-    set_image            = _setters.set_image
-    set_image_annotation = _setters.set_image_annotation
+    set_classes = _setters.set_classes
+    set_image   = _setters.set_image
+    set_ann     = _setters.set_ann
 
     ###########################################################################
     #### Dataset editor
