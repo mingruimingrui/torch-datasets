@@ -72,9 +72,9 @@ class DetectionCollateContainer(object):
 
         return image, annotations
 
-    def _convert_tensor(self, image, annotations, max_image_hw):
+    def _convert_tensor(self, image, annotations, batch_hw):
         # Perform normalization on image and convert to tensor
-        image = transforms.pad_img_to(image, max_image_hw)
+        image = transforms.pad_img_to(image, batch_hw)
         image = self.to_tensor(image)
         image = self.normalize(image)
 
@@ -123,7 +123,6 @@ class DetectionCollateContainer(object):
 
         for image, annotations in zip(image_group, annotations_group):
             image, annotations = self._convert_tensor(image, annotations, max_image_hw)
-
             image_batch.append(image)
             annotations_batch.append(annotations)
 
