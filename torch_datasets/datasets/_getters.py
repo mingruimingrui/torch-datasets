@@ -43,6 +43,19 @@ def list_all_ann_index(self):
     """ Retrieves all annotation ids """
     return list(self.ann_infos.keys())
 
+def get_class_info(self, class_id=None, class_name=None):
+    """ Retrieves class info associated with class_name or class_id """
+    if class_id is not None:
+        return self.id_to_class_info[class_id]
+    elif class_name is not None:
+        return self.name_to_class_info[class_name]
+    else:
+        raise Exception('Either class_id or class_name has to be provided')
+
+def get_class_image_ids(self, class_id=None, class_name=None):
+    """ Retrieves image_ids associated with class_name or class_id """
+    return self.get_class_info(class_id=class_id, class_name=class_name)['image_ids']
+
 def get_image(self, image_id):
     """ Retrieves the image associated with the image_id """
     if self.image_infos[image_id]['image_path'] is None:

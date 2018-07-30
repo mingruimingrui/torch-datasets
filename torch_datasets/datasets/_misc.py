@@ -1,3 +1,5 @@
+from __future__ import division
+
 import os
 import warnings
 from ..utils.image_io import get_image_size, read_image_url
@@ -38,7 +40,8 @@ def _populate_image_hw(self, image_id):
     else:
         height, width = read_image_url(image_info['image_url']).shape[:2]
 
-    image_info['height'] = height
-    image_info['width']  = width
+    image_info['height']       = height
+    image_info['width']        = width
+    image_info['aspect_ratio'] = width / height
 
     self.image_infos[image_id] = image_info

@@ -76,6 +76,7 @@ def set_image(
 
     # Store all required info
     self.image_infos[image_id] = image_info
+    self.all_image_index = self.list_all_image_index()
 
     return image_info
 

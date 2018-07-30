@@ -2,7 +2,11 @@
 import os
 import tqdm
 
+import json
+from scipy.io import loadmat
+
 from .detection_dataset import DetectionDataset
+from .siamese_dataset import SiameseDataset
 
 
 def convert_coco_to_detection_dataset(coco_ann_file, root_image_dir, no_crowd=False):
@@ -18,7 +22,6 @@ def convert_coco_to_detection_dataset(coco_ann_file, root_image_dir, no_crowd=Fa
     # Load coco data
     with open(coco_ann_file, 'r') as f:
         print('Loading coco annotation file')
-        import json
         coco_data = json.load(f)
 
     # Create empty dataset object
@@ -68,6 +71,7 @@ def convert_coco_to_detection_dataset(coco_ann_file, root_image_dir, no_crowd=Fa
 
     return dataset
 
+
 def convert_wider_to_detection_dataset(
     wider_mat_file,
     root_image_dir,
@@ -82,11 +86,9 @@ def convert_wider_to_detection_dataset(
         wider_mat_file  : The annotation file eg. 'XXX/wider_face_val.mat'
         root_image_dir : The folder storing all image folders, 'The directory with 0--Prade ...'
     Returns
-        DetectionDataset object containing coco data
+        DetectionDataset object containing wider data
     """
-
     # Load wider data
-    from scipy.io import loadmat
     wider_data = loadmat(wider_mat_file)
 
     # Create empty dataset object
@@ -156,5 +158,34 @@ def convert_wider_to_detection_dataset(
                     continue
 
         pbar.close()
+
+    return dataset
+
+
+def convert_lfw_to_siamese_dataset(people_txt_file, root_image_dir):
+    """ Converts a lfw people file to a siamese dataset (which can be saved with save_dataset)
+    Args
+        people_txt_file : The annotation file eg. 'XXX/peopleDevTrain.txt'
+        root_image_dir  : The folder storing all image folders, 'The directory with Aaron_Eckhart ...'
+    Returns
+        SiameseDataset object containing lfw data
+    """
+    # Load lfw data
+    with open(people_txt_file, 'r') as f:
+        lfw_data = f.readlines()[1:]
+
+    # Create empty dataset object
+    dataset = SiameseDataset(root_dir=root_image_dir)
+
+    # Set images one person at a time
+    for person_info in tqdm.tqdm(lfw_data, desc='Setting each person'):
+        person_name = person_info.split('\t')[0]
+        person_folder = os.path.join(root_image_dir, person_name)
+
+        for image_file in os.listdir(person_folder):
+            dataset.set_image(
+                image_path=os.path.join(person_name, image_file),
+                class_name=person_name
+            )
 
     return dataset
