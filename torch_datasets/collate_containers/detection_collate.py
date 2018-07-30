@@ -1,3 +1,5 @@
+import numpy as np
+
 import torch
 import torchvision
 
@@ -21,7 +23,7 @@ class DetectionCollateContainer(object):
             self.transform_generator = self._make_transform_generator()
 
     def _make_transform_generator(self):
-        return random_transform_generator(
+        return transforms.random_transform_generator(
             min_rotation    = self.configs['min_rotation'],
             max_rotation    = self.configs['max_rotation'],
             min_translation = self.configs['min_translation'],
@@ -35,13 +37,13 @@ class DetectionCollateContainer(object):
         )
 
     def _random_transform_entry(self, image, annotations):
-        transformation = adjust_transform_for_image(next(self.transform_generator), image)
+        transformation = transforms.adjust_transform_for_image(next(self.transform_generator), image)
 
         # Transform image and annotations
-        image = apply_transform_to_image(transformation, image)
+        image = transforms.apply_transform_to_image(transformation, image)
         annotations = annotations.copy()
         for index in range(annotations.shape[0]):
-            annotations[index, :4] = apply_transform_aabb(transformation, annotations[index, :4])
+            annotations[index, :4] = transforms.apply_transform_aabb(transformation, annotations[index, :4])
 
         return image, annotations
 
