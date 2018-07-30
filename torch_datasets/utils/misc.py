@@ -6,6 +6,8 @@ def deepcuda(obj, device_idx=None):
     """ Recursively copies a list, tuple, dict, module or tensor typed object into device memory
     Think of deepcopy but for cuda tensor conversion
     """
+    if obj is None:
+        return None
 
     obj_is_tensor = torch.tensor._TensorBase in obj.__class__.__bases__
     obj_is_module = torch.nn.modules.module.Module in obj.__class__.__bases__
@@ -21,3 +23,6 @@ def deepcuda(obj, device_idx=None):
 
     elif isinstance(obj, dict):
         return {k: deepcuda(v) for (k, v) in obj.items()}
+
+    else:
+        raise TypeError('Got unimplemented type {}'.format(type(obj)))
