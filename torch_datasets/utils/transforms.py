@@ -41,6 +41,30 @@ def resize_image_1(img, min_side=800, max_side=1333):
     return img, scale
 
 
+def resize_image_2(img, width=224, height=224, stretch_to_fill=True):
+    if stretch_to_fill:
+        # If to fill to maximum width and height
+        img = cv2.resize(img, dsize=(width, height))
+
+    else:
+        # Else we identify which axis to scale against
+        img_height, img_width = img.shape[:2]
+
+        scale_height = height / img_height
+        scale_width  = width  / img_width
+
+        # Get the smaller scale
+        scale = min(scale_height, scale_width)
+
+        # resize the image with the computed scale
+        img = cv2.resize(img, None, fx=scale, fy=scale)
+
+        # Pad image
+        img = pad_img_to(img, (height, width), location='center')
+
+    return img
+
+
 def pad_img_to(img, target_hw, location='upper-left', mode='constant'):
     """ Takes an numpy.ndarray image of the format HWC and pads it to the target_hw
 
