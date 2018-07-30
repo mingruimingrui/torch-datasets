@@ -210,6 +210,6 @@ class SiameseDataset(torch.utils.data.Dataset):
     def __getitem__(self, idx):
         image_id = self.all_image_index[idx]
         return {
-            'image'   : self.get_image(image_id),
-            'class_id': self.get_image_class_id(image_id)
+            'image': self.get_image(image_id),
+            'label': self.get_image_class_id(image_id)
         }
