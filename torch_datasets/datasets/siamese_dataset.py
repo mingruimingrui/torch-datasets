@@ -190,7 +190,7 @@ class SiameseDataset(torch.utils.data.Dataset):
             }
             self.id_to_class_info[class_info['id']]     = class_info
             self.name_to_class_info[class_info['name']] = class_info
-            self.next_class_id = max(self.image_infos.keys()) + 1
+            self.next_class_id = max(self.id_to_class_info.keys()) + 1
 
         # Update image_info
         image_info['bbox']       = bbox
