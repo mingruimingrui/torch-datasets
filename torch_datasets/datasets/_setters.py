@@ -24,7 +24,6 @@ def set_image(
     image_path=None,
     image_url=None,
     image_id=None,
-    bbox=None,
     height=None,
     width=None,
     classes=None,
@@ -77,8 +76,6 @@ def set_image(
 
     # Store all required info
     self.image_infos[image_id] = image_info
-    self.img_to_ann[image_id] = []
-    self.all_image_index = self.list_all_image_index()
 
     return image_info
 

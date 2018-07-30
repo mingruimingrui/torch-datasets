@@ -144,8 +144,45 @@ class DetectionDataset(torch.utils.data.Dataset):
     #### Dataset setters
 
     set_classes = _setters.set_classes
-    set_image   = _setters.set_image
     set_ann     = _setters.set_ann
+
+    def set_image(
+        self,
+        image_path=None,
+        image_url=None,
+        image_id=None,
+        height=None,
+        width=None,
+        force_overwrite=False
+    ):
+        """ Sets an image entry in the dataset
+
+        Required variables:
+            image_path/image_url (atleast 1 required)
+
+        Args
+            image_path      : The path to the locally stored image relative to root_dir
+            image_url       : The http public url to the image
+            image_id        : An integer to use for the image id
+            height          : The image pixel-wise height
+            width           : The image pixel-wise width
+            force_overwrite : Flag to trigger the overwrite of image at image_id
+        Returns
+            image info (Dataset object will also be updated with this new image info)
+        """
+        image_info = _setters.set_image(
+            self,
+            image_path=image_path,
+            image_url=image_url,
+            image_id=image_id,
+            height=height,
+            width=width,
+            force_overwrite=force_overwrite
+        )
+        self.img_to_ann[image_info['id']] = []
+        self.all_image_index = self.list_all_image_index()
+
+        return image_info
 
     ###########################################################################
     #### Dataset editor
