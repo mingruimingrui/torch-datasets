@@ -1,10 +1,11 @@
 import numpy as np
+from PIL import Image
 
 import torch
 import torchvision
 
 from ._detection_collate_configs import make_configs
-from ..utils import transforms
+from ..utils import transforms, visualization
 
 
 class DetectionCollateContainer(object):
@@ -129,3 +130,22 @@ class DetectionCollateContainer(object):
             'image'       : image_batch,
             'annotations' : annotations_batch
         }
+
+    def visualize_batch(self, batch, label_to_name=None, show=True, save_dir=None):
+        image_batch = batch['image']
+        annotations_batch = batch['annotations']
+
+        for index in range(len(annotations_batch)):
+            image = image_batch[index]
+            image = transforms.preprocess_img_inv(image).copy()
+            annotations = annotations_batch[index].data.numpy()
+            visualization.draw_annotations(image, annotations, color=(255, 0, 0), label_to_name=label_to_name)
+            image_ = Image.fromarray(image)
+
+            if show:
+                image_.show()
+
+            if save_dir:
+                image_.save(os.path.join(save_dir, 'sample_{}.jpg'.format(index)))
+
+        return image_
