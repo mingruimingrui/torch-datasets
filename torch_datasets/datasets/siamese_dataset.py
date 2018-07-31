@@ -127,9 +127,9 @@ class SiameseDataset(torch.utils.data.Dataset):
     get_image_width        = _getters.get_image_width
     get_image_aspect_ratio = _getters.get_image_aspect_ratio
 
-    get_image_class_id     = _getters.get_image_class_id
-    get_image_class_name   = _getters.get_image_class_name
-    get_all_image_class_id = _getters.get_all_image_class_id
+    get_image_class_id      = _getters.get_image_class_id
+    get_image_class_name    = _getters.get_image_class_name
+    get_all_image_class_ids = _getters.get_all_image_class_ids
 
     ###########################################################################
     #### Dataset setters
