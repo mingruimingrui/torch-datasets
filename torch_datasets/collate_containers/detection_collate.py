@@ -13,11 +13,6 @@ class DetectionCollateContainer(object):
         Meant to be picklable for ease of transfer of batch creating instructions
         """
         self.configs = make_configs(**kwargs)
-        self.to_tensor = torchvision.transforms.ToTensor()
-        self.normalize = torchvision.transforms.Normalize(
-            mean=[0.485, 0.456, 0.406],
-            std=[0.229, 0.224, 0.225]
-        )
         self.transform_generator = None
         if self.configs['allow_transform']:
             self.transform_generator = self._make_transform_generator()
@@ -77,8 +72,7 @@ class DetectionCollateContainer(object):
     def _convert_tensor(self, image, annotations, batch_hw):
         # Perform normalization on image and convert to tensor
         image = transforms.pad_img_to(image, batch_hw)
-        image = self.to_tensor(image)
-        image = self.normalize(image)
+        image = transforms.preprocess_img(image)
 
         # Convert annotations to tensors
         annotations = torch.Tensor(annotations)

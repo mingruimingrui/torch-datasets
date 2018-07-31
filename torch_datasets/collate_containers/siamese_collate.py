@@ -13,11 +13,6 @@ class SiameseCollateContainer(object):
         Meant to be picklable for ease of transfer of batch creating instructions
         """
         self.configs = make_configs(**kwargs)
-        self.to_tensor = torchvision.transforms.ToTensor()
-        self.normalize = torchvision.transforms.Normalize(
-            mean=[0.485, 0.456, 0.406],
-            std=[0.229, 0.224, 0.225]
-        )
         self.transform_generator = None
         if self.configs['allow_transform']:
             self.transform_generator = self._make_transform_generator()
@@ -51,8 +46,7 @@ class SiameseCollateContainer(object):
         return image
 
     def _convert_tensor(self, image):
-        image = self.to_tensor(image)
-        image = self.normalize(image)
+        image = transforms.preprocess_img(image)
         return image
 
     def collate_fn(self, sample_group):
