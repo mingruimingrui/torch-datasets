@@ -137,4 +137,4 @@ def get_image_class_name(self, image_id):
 
 def get_all_image_class_ids(self):
     """ Retrieves class ids for every image as a list (used as inputs for BalancedBatchSampler)"""
-    return [image_info['class_id'] for image_info in self.image_infos]
+    return [image_info['class_id'] for image_info in self.image_infos.values()]

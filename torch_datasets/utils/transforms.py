@@ -3,6 +3,7 @@ from __future__ import division
 import math
 import cv2
 import numpy as np
+import torch
 
 from .collections import AttrDict
 from ._transforms import (
@@ -10,6 +11,37 @@ from ._transforms import (
     random_transform,
     random_transform_generator
 )
+
+
+TORCH_IMG_MEAN = [0.485, 0.456, 0.406]
+TORCH_IMG_STD  = [0.229, 0.224, 0.225]
+
+
+def preprocess_img(img):
+    """ Preprocess an image based on torch convention """
+    # Make a copy of img as array
+    img = np.array(img)
+
+    # Convert into tensor
+    img = torch.Tensor(img).permute(2, 0, 1) / 255.0
+
+    # Normalize
+    for t, m, s in zip(img, TORCH_IMG_MEAN, TORCH_IMG_STD):
+        t.sub_(m).div_(s)
+
+    return img
+
+
+def preprocess_img_inv(img):
+    """ Unpreprocess an image based on torch convention and returns an array """
+    img = img.data.numpy().copy()
+
+    img[0] = img[0] * TORCH_IMG_STD[0] + TORCH_IMG_MEAN[0]
+    img[1] = img[1] * TORCH_IMG_STD[1] + TORCH_IMG_MEAN[1]
+    img[2] = img[2] * TORCH_IMG_STD[2] + TORCH_IMG_MEAN[2]
+    img = img.transpose(1, 2, 0) * 255.0
+
+    return img.round().astype('uint8')
 
 
 def resize_image_1(img, min_side=800, max_side=1333):
@@ -100,7 +132,6 @@ def pad_img_to(img, target_hw, location='upper-left', mode='constant'):
     return np.pad(img, pad, mode=mode)
 
 
-
 def adjust_transform_for_image(transform, image, relative_translation=True):
     """ Adjust a transformation for a specific image.
 
@@ -184,6 +215,7 @@ def create_transform_parameters(
     _p.immutable(True)
 
     return _p
+
 
 DEFAULT_TRANSFORM_PARAMETERS = create_transform_parameters()
 
