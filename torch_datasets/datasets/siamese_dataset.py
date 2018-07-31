@@ -109,6 +109,13 @@ class SiameseDataset(torch.utils.data.Dataset):
     list_classes         = _getters.list_classes
     list_all_image_index = _getters.list_all_image_index
 
+    def list_all_class_id_with_multiple_images(self, n=2):
+        """ Retrieves the list of class ids with multiple images
+        Args
+            n : Minimum number of occurence
+        """
+        return [class_info['id'] for class_info in self.class_infos if len(class_info['image_ids']) >= n]
+
     get_class_info      = _getters.get_class_info
     get_class_image_ids = _getters.get_class_image_ids
 
@@ -120,17 +127,9 @@ class SiameseDataset(torch.utils.data.Dataset):
     get_image_width        = _getters.get_image_width
     get_image_aspect_ratio = _getters.get_image_aspect_ratio
 
-    def get_image_class_id(self, image_id):
-        """ Retrieves the image class id given an image id """
-        return self.image_infos[image_id]['class_id']
-
-    def get_image_class_name(self, image_id):
-        """ Retrieves the image class name given an image id """
-        return self.image_infos[image_id]['class_name']
-
-    def list_all_class_id_with_multiple_images(self):
-        """ Retrieves the list of class ids with multiple images """
-        return [class_info['id'] for class_info in self.class_infos if len(class_info['image_ids']) > 1]
+    get_image_class_id     = _getters.get_image_class_id
+    get_image_class_name   = _getters.get_image_class_name
+    get_all_image_class_id = _getters.get_all_image_class_id
 
     ###########################################################################
     #### Dataset setters
