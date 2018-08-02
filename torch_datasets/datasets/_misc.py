@@ -7,11 +7,11 @@ from ..utils.image_io import get_image_size, read_image_url
 
 def _prepare_bbox(self, bbox, image_id):
     """ Checks and converts a bbox to (4,) """
+    if bbox is None:
+        return None
+
     image_height = self.get_image_height(image_id)
     image_width  = self.get_image_width(image_id)
-
-    if bbox is None:
-        return [0, 0, image_width, image_height]
 
     # Convert to (4,)
     if len(bbox) == 2:

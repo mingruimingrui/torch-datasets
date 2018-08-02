@@ -189,3 +189,27 @@ def convert_lfw_to_siamese_dataset(people_txt_file, root_image_dir):
             )
 
     return dataset
+
+
+def convert_webface_to_siamese_dataset(root_image_dir):
+    """ Converts a CASIA-WebFace image set to a siamese dataset (which can be saved with save_dataset)
+    Args
+        root_image_dir  : The folder storing all image folders, 'The directory with 0000045/ ...'
+    Returns
+        SiameseDataset object containing CASIA-WebFace data
+    """
+    # Create empty dataset object
+    dataset = SiameseDataset(root_dir=root_image_dir)
+
+    # Set images one person at a time
+    all_person_folders = os.listdir(root_image_dir)
+    for person_folder in tqdm.tqdm(all_person_folders, desc='Setting each person'):
+        person_name = str(person_folder)
+
+        for image_file in os.listdir(os.path.join(root_image_dir, person_folder)):
+            dataset.set_image(
+                image_path=os.path.join(person_folder, image_file),
+                class_name=person_name
+            )
+
+    return dataset
