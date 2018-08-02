@@ -14,11 +14,9 @@ class SiameseCollateContainer(object):
         """
         self.configs = make_configs(**kwargs)
         self.transform_generator = None
-        if self.configs['allow_transform']:
-            self.transform_generator = self._make_transform_generator()
 
-    def _make_transform_generator(self):
-        return transforms.random_transform_generator(
+    def _make_random_transformation(self):
+        return transforms.random_transform(
             min_rotation    = self.configs['min_rotation'],
             max_rotation    = self.configs['max_rotation'],
             min_translation = self.configs['min_translation'],
@@ -28,11 +26,12 @@ class SiameseCollateContainer(object):
             min_scaling     = self.configs['min_scaling'],
             max_scaling     = self.configs['max_scaling'],
             flip_x_chance   = self.configs['flip_x_chance'],
-            flip_y_chance   = self.configs['flip_y_chance'],
+            flip_y_chance   = self.configs['flip_y_chance']
         )
 
     def _random_transform_entry(self, image):
-        transformation = transforms.adjust_transform_for_image(next(self.transform_generator), image)
+        transformation = self._make_random_transformation()
+        transformation = transforms.adjust_transform_for_image(transformation, image)
         image = transforms.apply_transform_to_image(transformation, image)
         return image
 
