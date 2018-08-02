@@ -180,7 +180,6 @@ class DetectionDataset(torch.utils.data.Dataset):
             force_overwrite=force_overwrite
         )
         self.img_to_ann[image_info['id']] = []
-        self.all_image_index = self.list_all_image_index()
 
         return image_info
 
