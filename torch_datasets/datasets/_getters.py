@@ -135,6 +135,10 @@ def get_image_class_name(self, image_id):
     """ Retrieves the image class name given an image id """
     return self.image_infos[image_id]['class_name']
 
+def get_image_class_ids(self, image_id):
+    """ Retrieves the image classes given an image id """
+    return self.image_infos[image_id]['class_ids']
+
 def get_image_bbox(self, image_id):
     """ Retrieves the image bbox if any, else returns None """
     return self.image_infos[image_id]['bbox']

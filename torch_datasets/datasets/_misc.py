@@ -5,6 +5,23 @@ import warnings
 from ..utils.image_io import get_image_size, read_image_url
 
 
+def _prepare_classes(self, classes):
+    if classes is None:
+        return []
+
+    if not isinstance(classes, list):
+        classes = [classes]
+
+    for i, c in enumerate(classes):
+        if c in self.id_to_class_info:
+            classes[i] = c
+        elif c in self.name_to_class_info:
+            classes[i] = self.name_to_class_info[c]['id']
+        else:
+            raise Exception('The class {} is invalid'.format(c))
+
+    return classes
+
 def _prepare_bbox(self, bbox, image_id):
     """ Checks and converts a bbox to (4,) """
     if bbox is None:

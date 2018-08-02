@@ -26,14 +26,12 @@ def set_image(
     image_id=None,
     height=None,
     width=None,
-    classes=None,
     force_overwrite=False
 ):
     """ Sets an image entry in the dataset
 
     Required variables:
         image_path/image_url (atleast 1 required)
-        classes (only for classification datasets)
 
     Args
         image_path      : The path to the locally stored image relative to root_dir
@@ -42,13 +40,6 @@ def set_image(
         bbox            : The bounding box to apply to image (does not apply for detection datasets)
         height          : The image pixel-wise height
         width           : The image pixel-wise width
-        classes         : Classes assigned to this image, can be a string, integer, or list of both (only for classification task)
-        Eg. classes can be ['asian', 'teen', 'male']
-            Then image classes can be ['asian', ['teen', 2], [0, 2], 1]   (Here we just have 4 images)
-            1st image will have only the label 'asian'
-            2nd image will have the labels 'teen' and 'male'
-            3rd image will have the labels 'asian' and 'male'
-            4th image will have only the label 'teen'
         force_overwrite : Flag to trigger the overwrite of image at image_id
     Returns
         image info (Dataset object will also be updated with this new image info)
