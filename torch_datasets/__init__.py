@@ -2,6 +2,7 @@
 # Datasets
 from .datasets.detection_dataset import DetectionDataset
 from .datasets.siamese_dataset import SiameseDataset
+from .datasets.classification_dataset import ClassificationDataset
 
 # Colalte functions
 from .collate_containers.detection_collate import DetectionCollateContainer
