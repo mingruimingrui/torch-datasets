@@ -197,6 +197,7 @@ class SiameseDataset(torch.utils.data.Dataset):
         image_info['class_id']   = class_info['id']
         image_info['class_name'] = class_info['name']
 
+        return image_info
 
     ###########################################################################
     #### Dataset editor
