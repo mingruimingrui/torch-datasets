@@ -211,6 +211,7 @@ class SiameseDataset(torch.utils.data.Dataset):
     def __getitem__(self, idx):
         image_id = self.all_image_index[idx]
         return {
+            'idx'  : idx,
             'image': self.get_image(image_id),
             'bbox' : self.get_image_bbox(image_id),
             'label': self.get_image_class_id(image_id)
