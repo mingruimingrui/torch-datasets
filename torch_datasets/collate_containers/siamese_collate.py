@@ -13,7 +13,6 @@ class SiameseCollateContainer(object):
         Meant to be picklable for ease of transfer of batch creating instructions
         """
         self.configs = make_configs(**kwargs)
-        self.transform_generator = None
 
     def _make_random_transformation(self):
         return transforms.random_transform(
