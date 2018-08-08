@@ -52,7 +52,7 @@ class BalancedBatchSampler(torch.utils.data.sampler.BatchSampler):
             # Randomly sample remainder
             labels_choosen = {l: None for l in labels_choosen}
             remaining_entry_ids = []
-            for label, entry_ids in self.label_to_entry_ids:
+            for label, entry_ids in self.label_to_entry_ids.items():
                 if label not in labels_choosen:
                     remaining_entry_ids += entry_ids
             batch_ids += random.sample(remaining_entry_ids, self.batch_size - len(batch_ids))
