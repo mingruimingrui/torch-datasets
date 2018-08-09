@@ -3,11 +3,11 @@ import numpy as np
 import torch
 import torchvision
 
-from ._siamese_collate_configs import make_configs
+from ._image_collate_configs import make_configs
 from ..utils import transforms
 
 
-class SiameseCollateContainer(object):
+class ImageCollateContainer(object):
     def __init__(self, **kwargs):
         """ Light weight container that contains the collate instructions
         Meant to be picklable for ease of transfer of batch creating instructions
@@ -47,21 +47,14 @@ class SiameseCollateContainer(object):
         image = transforms.preprocess_img(image)
         return image
 
-    def collate_fn(self, sample_group):
-        """ Collate fn requires datasets which returns samples as a dict in the following format
-        sample = {
-            'image' : Image in HWC RGB format as a numpy.ndarray,
-            'label' : Class (as an int) image belongs to
-        }
-        Returns a sample in the following format
-        sample = {
-            'image' : torch.Tensor Images in NCHW normalized according to pytorch standard
-            'label' : torch.Tensor class ids
-        }
+    def collate_fn(self, image_group):
+        """ Collate function that collates a list of images into a preprocessed tensor
+        Args
+            image_group : List of numpy.ndarray images in the HWC, RGB format
+        Returns
+            A torch.Tensor in the format NCHW normalized according to pytorch standard
         """
-        # Gather image and label group
-        image_group = [sample['image'] for sample in sample_group]
-        label_group = [sample['label'] for sample in sample_group]
+        image_batch = [None] * len(image_group)
 
         # Preprocess individual samples
         for index, image in enumerate(image_group):
@@ -69,14 +62,7 @@ class SiameseCollateContainer(object):
             if self.configs['allow_transform']:
                 image = self._random_transform_entry(image)
             image = self._resize_image(image)
-            image_group[index] = image
+            image = self._convert_tensor(image)
+            image_batch[index] = image
 
-        # Compile samples into batch
-        image_batch = [self._convert_tensor(image) for image in image_group]
-        image_batch = torch.stack(image_batch, dim=0)
-        label_batch = label_group
-
-        return {
-            'image' : image_batch,
-            'label' : label_batch
-        }
+        return torch.stack(image_batch, dim=0)
