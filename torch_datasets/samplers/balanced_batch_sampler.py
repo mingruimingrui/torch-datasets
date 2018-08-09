@@ -59,6 +59,7 @@ class BalancedBatchSampler(torch.utils.data.sampler.BatchSampler):
 
         # Randomly shuffle batch ids
         batch_ids = random.sample(batch_ids, self.batch_size)
+        batch_ids = torch.ByteTensor(batch_ids)
 
         return batch_ids
 
