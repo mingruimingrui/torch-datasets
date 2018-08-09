@@ -1,2 +1,2 @@
 from .detection_collate import DetectionCollateContainer
-from .siamese_collate import SiameseCollateContainer
+from .image_collate import ImageCollateContainer

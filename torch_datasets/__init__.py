@@ -6,7 +6,7 @@ from .datasets.classification_dataset import ClassificationDataset
 
 # Colalte functions
 from .collate_containers.detection_collate import DetectionCollateContainer
-from .collate_containers.siamese_collate import SiameseCollateContainer
+from .collate_containers.image_collate import ImageCollateContainer
 
 # Samplers
 from .samplers.balanced_batch_sampler import BalancedBatchSampler
