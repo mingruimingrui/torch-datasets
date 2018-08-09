@@ -36,7 +36,7 @@ class BalancedBatchSampler(torch.utils.data.sampler.BatchSampler):
 
         # Subset the labels with more than n_samples entries
         self.labels_subset = [label for (label, entry_ids) in self.label_to_entry_ids.items() if len(entry_ids) >= n_samples]
-        assert len(self.labels_subset) >= n_classes, 'Too little labels have {} entries, choose a smaller n_classes or n_csamples'.format(n_samples)
+        assert len(self.labels_subset) >= n_classes, 'Too little labels have {} entries, choose a smaller n_classes or n_samples'.format(n_samples)
 
     def _make_batch_ids(self):
         batch_ids = []
