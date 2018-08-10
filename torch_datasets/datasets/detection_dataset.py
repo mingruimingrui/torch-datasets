@@ -203,8 +203,4 @@ class DetectionDataset(torch.utils.data.Dataset):
 
     def __getitem__(self, idx):
         image_id = self.all_image_index[idx]
-        return {
-            'idx'        : idx,
-            'image'      : self.get_image(image_id),
-            'annotations': self.get_ann_array(image_id)
-        }
+        return self.get_image(image_id), self.get_ann_array(image_id)

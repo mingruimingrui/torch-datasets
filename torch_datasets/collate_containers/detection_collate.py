@@ -79,23 +79,22 @@ class DetectionCollateContainer(object):
         return image, annotations
 
     def collate_fn(self, sample_group):
-        """ Collate fn requires datasets which returns samples as a dict in the following format
-        sample = {
-            'image'       : Image in HWC RGB format as a numpy.ndarray,
-            'annotations' : Annotations of shape (num_annotations, 5) also numpy.ndarray
-                - each row will represent 1 detection target of the format
-                (x1, y1, x2, y2, class_id)
-        }
-        Returns a sample in the following format
-        sample = {
-            'image'          : torch.Tensor Images in NCHW normalized according to pytorch standard
-            'annotations'    : list of torch.Tensor of shape (N, num_anchors, 5)
-                               Number of objects in list corresponds to batch size
-        }
+        """ Collate fn requires dataset which returns samples as a tuple in the following format
+        sample = (image, annotations)
+        image       : Image in HWC RGB format as a numpy.ndarray
+        annotations : Annotations of shape (num_annotations, 5) also numpy.ndarray
+            - each row will represent 1 detection target in the format
+            (x1, y1, x2, y2, class_id)
+
+        Returns a batch as a tuple in the following format
+        batch = (image, annotations)
+        image       : torch.Tensor Images in NCHW normalized according to pytorch standard
+        annotations : list of torch.Tensor of shape (N, num_anchors, 5)
+                      Number of objects in list corresponds to batch size
         """
         # Gather image and annotations group
-        image_group       = [sample['image'] for sample in sample_group]
-        annotations_group = [sample['annotations'] for sample in sample_group]
+        image_group       = [sample[0] for sample in sample_group]
+        annotations_group = [sample[1] for sample in sample_group]
 
         # Preprocess individual samples
         for index, (image, annotations) in enumerate(zip(image_group, annotations_group)):
@@ -124,10 +123,7 @@ class DetectionCollateContainer(object):
         # Stack image batches only as annotations batch can be differently sized
         image_batch = torch.stack(image_batch, dim=0)
 
-        return {
-            'image'       : image_batch,
-            'annotations' : annotations_batch
-        }
+        return image_batch, annotations_batch
 
     def visualize_batch(self, batch, label_to_name=None, show=True, save_dir=None):
         image_batch = batch['image']
