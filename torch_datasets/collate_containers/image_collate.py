@@ -1,3 +1,4 @@
+import collections
 import numpy as np
 
 import torch
@@ -47,20 +48,47 @@ class ImageCollateContainer(object):
         image = transforms.preprocess_img(image)
         return image
 
-    def collate_fn(self, image_group):
+    def collate_fn(self, group):
         """ Collate function that collates a list of images into a preprocessed tensor
         Args
-            image_group : List of numpy.ndarray images in the HWC, RGB format
+            group : List of dicts or numpy.ndarray, each entry can be of either
+                    - A numpy.ndarray image in the HWC, RGB format
+                    - A dict in the
+                      {
+                          'image' : numpy.ndarray image in the HWC, RGB format,
+                          'bbox'  : list-like in the format (x1, y1, x2, y2) or None
+                      }
+
+            If you do not wish to perform cropping, you can do any one of the following
+            - Just provide a list of numpy.ndarray
+            - Do not provide the 'bbox' key in the dict entry
+            - Set 'bbox' to be None
+
         Returns
             A torch.Tensor in the format NCHW normalized according to pytorch standard
         """
-        image_batch = [None] * len(image_group)
+        image_batch = [None] * len(group)
 
         # Preprocess individual samples
-        for index, image in enumerate(image_group):
+        for index, entry in enumerate(group):
+            # Identify entry type
+            if isinstance(entry, np.ndarray):
+                image = entry
+                bbox = None
+            elif isinstance(entry, collections.Mapping):
+                image = entry['image']
+                bbox = entry['bbox'] if 'bbox' in entry else None
+            else:
+                raise ValueError('{} is an unsupported entry type'.format(type(batch)))
+
+            # Crop sample
+            if bbox is not None:
+                image = image[bbox[1]:bbox[3], bbox[0]:bbo[2]]
+
             # Augment sample
             if self.configs['allow_transform']:
                 image = self._random_transform_entry(image)
+
             image = self._resize_image(image)
             image = self._convert_tensor(image)
             image_batch[index] = image
