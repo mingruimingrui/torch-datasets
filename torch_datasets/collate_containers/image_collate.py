@@ -29,6 +29,13 @@ class ImageCollateContainer(object):
             flip_y_chance   = self.configs['flip_y_chance']
         )
 
+    def _apply_bbox(self, image, bbox):
+        x1 = int(round(max(bbox[0], 0)))
+        y1 = int(round(max(bbox[1], 0)))
+        x2 = int(round(min(bbox[2], image.shape[1])))
+        y2 = int(round(min(bbox[3], image.shape[0])))
+        return image[y1:y2, x1:x2]
+
     def _random_transform_entry(self, image):
         transformation = self._make_random_transformation()
         transformation = transforms.adjust_transform_for_image(transformation, image)
@@ -83,7 +90,7 @@ class ImageCollateContainer(object):
 
             # Crop sample
             if bbox is not None:
-                image = image[bbox[1]:bbox[3], bbox[0]:bbo[2]]
+                image = self._apply_bbox(image, bbox)
 
             # Augment sample
             if self.configs['allow_transform']:
