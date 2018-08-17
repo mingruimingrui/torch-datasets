@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='torch-datasets',
-    version='1.0',
+    version='0.2b',
     description='Dataset tools for quick creation and editting of datasets',
     url='https://github.com/mingruimingrui/torch-datasets',
     author='Wang Ming Rui',
